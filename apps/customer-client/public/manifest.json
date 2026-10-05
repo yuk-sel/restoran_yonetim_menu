@@ -1,0 +1,10 @@
+{
+  "name": "Sofra Menü",
+  "short_name": "Sofra",
+  "description": "Masanızdaki QR kodu okutarak menüyü görün ve sipariş verin.",
+  "lang": "tr",
+  "start_url": "../index.html",
+  "display": "standalone",
+  "background_color": "#F3F5F4",
+  "theme_color": "#0F3D38"
+}
