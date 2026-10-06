@@ -1,25 +1,48 @@
-const loginForm= document.getElementById('login-form')
-const API_BASE = "http://localhost:3000/api";
-loginForm.addEventListener("submit", async function(event){
-  event.preventDefault();
-  const email= document.getElementById('email').value
-  const sifre= document.getElementById('password').value
+// Giriş sayfası — POST /api/auth/login
+(function () {
+  const form = document.getElementById("login-form");
+  const err = document.getElementById("error-message");
+  const btn = document.getElementById("submitBtn");
+  const pw = document.getElementById("password");
 
-    const res= await fetch(`${API_BASE}/auth/login`, {
-    method: "POST",
-    headers: {'Content-Type': "application/json"},
-    body: JSON.stringify({email: email, password: sifre  })
+  // Zaten giriş yapılmışsa panele geç
+  if (Auth.token) { location.replace("index.html"); return; }
+
+  if (new URLSearchParams(location.search).get("expired")) showError("Oturumunuzun süresi doldu. Tekrar giriş yapın.");
+
+  function showError(msg) { err.textContent = msg; err.hidden = !msg; }
+
+  document.getElementById("pwToggle").addEventListener("click", (e) => {
+    const show = pw.type === "password";
+    pw.type = show ? "text" : "password";
+    e.currentTarget.textContent = show ? "Gizle" : "Göster";
   });
-const data = await res.json();
 
-if(data.token){
-  localStorage.setItem("token", data.token);
-  localStorage.setItem("user", JSON.stringify(data.user));
-  window.location.href = "index.html";
-}
-else{
-  document.getElementById("error-message").textContent = data.error;
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+    const password = pw.value;
+    if (!email || !password) { showError("E-posta ve şifreyi girin."); return; }
 
-}
-});
+    showError("");
+    btn.disabled = true;
+    btn.textContent = "Giriş yapılıyor…";
+    try {
+      const data = await Api.login(email, password);
+      if (!data.token) throw new Error(data.error || "Giriş yapılamadı.");
+      Auth.save(data.token, data.user, false);
+      location.href = "index.html";
+    } catch (ex) {
+      showError(ex instanceof NetworkError
+        ? "Sunucuya ulaşılamadı. Terminalde server klasöründe \"node src/app.js\" çalışıyor mu?"
+        : ex.message);
+      btn.disabled = false;
+      btn.textContent = "Giriş yap";
+    }
+  });
 
+  document.getElementById("demoBtn").addEventListener("click", () => {
+    Auth.save("demo", { id: 0, full_name: "Örnek Yönetici", role: "ADMIN" }, true);
+    location.href = "index.html";
+  });
+})();
