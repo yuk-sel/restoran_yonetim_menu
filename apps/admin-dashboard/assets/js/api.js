@@ -143,7 +143,13 @@ const Demo = (() => {
     { id: 1, table_id: 9, call_type: "CALL_WAITER", created_at: minsAgo(2), is_resolved: false },
     { id: 2, table_id: 4, call_type: "REQUEST_BILL", created_at: minsAgo(4), is_resolved: false }
   ];
-  let callSeq = 3, catSeq = 6, prodSeq = 200, tableSeq = 13;
+  const staff = [
+    { id: 1, full_name: "Örnek Yönetici", email: "yonetici@sofra.com", role: "ADMIN" },
+    { id: 2, full_name: "Ayşe Demir", email: "ayse@sofra.com", role: "GARSON" },
+    { id: 3, full_name: "Mehmet Kaya", email: "mehmet@sofra.com", role: "GARSON" },
+    { id: 4, full_name: "Fatma Şahin", email: "mutfak@sofra.com", role: "MUTFAK" }
+  ];
+  let callSeq = 3, catSeq = 6, prodSeq = 200, tableSeq = 13, staffSeq = 5;
 
   // Örnek modda arada bir yeni sipariş / çağrı gelsin ki bildirimler görülsün
   let lastSim = Date.now();
@@ -179,7 +185,13 @@ const Demo = (() => {
     async createProduct(p) { await wait(150); const n = { id: prodSeq++, status: "AVAILABLE", image_url: null, ...p }; products.push(n); return clone(n); },
     async setProductStatus(id, status) { await wait(100); products.find((x) => x.id == id).status = status; return true; },
     async getCalls() { await wait(80); return clone(calls.filter((c) => !c.is_resolved)); },
-    async resolveCall(id) { await wait(100); const c = calls.find((x) => x.id == id); c.is_resolved = true; return clone(c); }
+    async resolveCall(id) { await wait(100); const c = calls.find((x) => x.id == id); c.is_resolved = true; return clone(c); },
+    async getStaff() { await wait(100); return clone(staff); },
+    async createStaff(u) {
+      await wait(200);
+      if (staff.some((s) => s.email === u.email)) throw new Error("Bu e-posta zaten kayıtlı");
+      const s = { id: staffSeq++, full_name: u.full_name, email: u.email, role: u.role }; staff.push(s); return clone(s);
+    }
   };
 })();
 
@@ -202,7 +214,10 @@ const Live = {
   // Not: sunucuda henüz yok. Eklenince çalışır: PATCH /api/menu/products/:id/status { status }
   setProductStatus: (id, status) => request(`/menu/products/${id}/status`, { method: "PATCH", body: { status } }),
   getCalls: () => request("/waiter/active-calls"),
-  resolveCall: (id) => request(`/waiter/calls/${id}/resolve`, { method: "PATCH" })
+  resolveCall: (id) => request(`/waiter/calls/${id}/resolve`, { method: "PATCH" }),
+  // Not: sunucuda henüz yok. Eklenince liste buradan gelir: GET /api/auth/users
+  getStaff: () => request("/auth/users"),
+  createStaff: (u) => request("/auth/register", { method: "POST", body: { restaurant_id: Auth.restaurantId, ...u } })
 };
 
 const Api = {
@@ -215,7 +230,7 @@ const Api = {
   }
 };
 ["getOrders", "setOrderStatus", "getTables", "createTable", "startSession", "getCategories", "getProducts",
- "createCategory", "createProduct", "setProductStatus", "getCalls", "resolveCall"]
+ "createCategory", "createProduct", "setProductStatus", "getCalls", "resolveCall", "getStaff", "createStaff"]
   .forEach((fn) => { Api[fn] = (...a) => Api.src()[fn](...a); });
 
 window.CONFIG = CONFIG; window.STATUS = STATUS; window.Auth = Auth; window.Api = Api; window.NetworkError = NetworkError;

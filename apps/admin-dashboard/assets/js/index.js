@@ -44,7 +44,8 @@
     menu:       { title: "Menü",         sub: () => "Kategoriler, ürünler ve stok durumu", render: renderMenu },
     masalar:    { title: "Masalar & QR", sub: () => "Her masanın QR kodu müşteriyi doğrudan o masanın menüsüne götürür.", render: renderTables },
     mutfak:     { title: "Mutfak Ekranı",sub: () => `${LATE_MIN} dakikayı geçen siparişler kırmızıyla işaretlenir.`, render: renderKitchen },
-    raporlar:   { title: "Raporlar",     sub: () => "İptal edilen siparişler ciroya dahil edilmez.", render: renderReports }
+    raporlar:   { title: "Raporlar",     sub: () => "İptal edilen siparişler ciroya dahil edilmez.", render: renderReports },
+    personel:   { title: "Personel",     sub: () => "Garson, mutfak ve yönetici hesapları", render: renderStaff }
   };
 
   function setupShell() {
@@ -680,6 +681,108 @@
       </div>`;
 
     $$(".chip[data-r]").forEach((c) => (c.onclick = () => { state.range = c.dataset.r; render(); }));
+  }
+
+  /* ================= 7. Personel ================= */
+  const ROLES = {
+    ADMIN:    { label: "Admin",    desc: "Panelin tamamı, personel ekleme" },
+    YONETICI: { label: "Yönetici", desc: "Siparişler, menü, masalar ve raporlar" },
+    GARSON:   { label: "Garson",   desc: "Siparişleri onaylar, masa çağrılarına bakar" },
+    MUTFAK:   { label: "Mutfak",   desc: "Mutfak ekranında siparişleri hazırlar" }
+  };
+  const LOCAL_STAFF_KEY = "sofra_staff_added";
+  const localStaff = () => { try { return JSON.parse(localStorage.getItem(LOCAL_STAFF_KEY)) || []; } catch { return []; } };
+
+  async function renderStaff() {
+    $("#viewActions").innerHTML = `<button class="btn primary" id="addStaff">${ICON.plus}Personel ekle</button>`;
+    $("#addStaff").onclick = staffModal;
+    $("#view").innerHTML = '<p class="empty">Yükleniyor…</p>';
+
+    let list = null, listMissing = false;
+    try { list = await Api.getStaff(); }
+    catch (e) { listMissing = true; list = localStaff(); }
+    if (state.view !== "personel") return;
+
+    const byRole = Object.keys(ROLES).map((r) => [r, list.filter((u) => u.role === r).length]);
+    $("#view").innerHTML = `
+      ${listMissing ? `<div class="banner"><div><b>Personel listesi sunucudan alınamıyor.</b> Sunucuda listeleme adresi (<code>GET /api/auth/users</code>) henüz yok. Hesap eklemek çalışıyor; aşağıda sadece bu tarayıcıdan eklenen hesaplar görünür.</div></div>` : ""}
+      <div class="stats">
+        ${byRole.map(([r, n]) => `<div class="stat"><span class="k">${ROLES[r].label}</span><span class="v num">${n}</span><span class="s">${ROLES[r].desc}</span></div>`).join("")}
+      </div>
+      ${list.length ? `<div class="table-wrap"><table class="data">
+        <thead><tr><th>Ad soyad</th><th>E-posta</th><th>Rol</th></tr></thead>
+        <tbody>${list.map((u) => `<tr>
+          <td><span style="display:inline-flex;align-items:center;gap:10px"><span class="avatar" style="width:30px;height:30px;font-size:12px;color:var(--brand-ink)">${esc(initials(u.full_name))}</span><b style="font-weight:600">${esc(u.full_name)}</b></span></td>
+          <td>${esc(u.email)}</td>
+          <td><span class="role-tag ${esc(u.role)}">${esc((ROLES[u.role] || {}).label || u.role)}</span></td>
+        </tr>`).join("")}</tbody></table></div>`
+      : `<div class="panel"><p class="empty">Henüz eklenen personel yok. Sağ üstteki “Personel ekle” ile garson ve mutfak hesaplarını oluşturun.</p></div>`}`;
+  }
+  const initials = (n) => String(n || "?").split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toLocaleUpperCase("tr");
+
+  function makePassword() {
+    const chars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+    const a = new Uint32Array(10); crypto.getRandomValues(a);
+    return [...a].map((n) => chars[n % chars.length]).join("");
+  }
+
+  function staffModal() {
+    openModal(`
+      <h2>Personel ekle</h2>
+      <form id="sForm" style="display:flex;flex-direction:column;gap:14px" novalidate>
+        <div class="field"><label for="sName">Ad soyad</label><input class="input" id="sName" required maxlength="150" autocomplete="off"></div>
+        <div class="field"><label for="sEmail">E-posta</label><input class="input" id="sEmail" type="email" required maxlength="150" autocomplete="off" placeholder="ornek@restoran.com"><small>Personel panele bu adresle giriş yapar.</small></div>
+        <div class="field"><label>Rol</label>
+          <div class="role-pick" role="radiogroup" aria-label="Rol">
+            ${["GARSON", "MUTFAK", "YONETICI", "ADMIN"].map((r, i) => `<label class="role-opt"><input type="radio" name="sRole" value="${r}" ${i === 0 ? "checked" : ""}><span><b>${ROLES[r].label}</b><small>${ROLES[r].desc}</small></span></label>`).join("")}
+          </div>
+        </div>
+        <div class="field"><label for="sPass">Geçici şifre</label>
+          <div class="pw-wrap"><input class="input" id="sPass" type="text" required minlength="6" autocomplete="new-password"><button class="pw-toggle" type="button" id="sGen">Yenile</button></div>
+          <small>En az 6 karakter. Hesap açıldıktan sonra bu şifreyi personele iletin.</small></div>
+        <p class="form-error" id="sErr" hidden></p>
+        <div class="foot"><button class="btn" type="button" data-close>Vazgeç</button><button class="btn primary" type="submit">Hesabı oluştur</button></div>
+      </form>`, (dlg, close) => {
+      const pass = $("#sPass", dlg);
+      pass.value = makePassword();
+      $("#sGen", dlg).onclick = () => { pass.value = makePassword(); };
+      $("#sForm", dlg).addEventListener("input", () => { $("#sErr", dlg).hidden = true; });
+      $("#sForm", dlg).onsubmit = async (e) => {
+        e.preventDefault();
+        const err = $("#sErr", dlg);
+        const body = {
+          full_name: $("#sName", dlg).value.trim(),
+          email: $("#sEmail", dlg).value.trim().toLowerCase(),
+          role: $('input[name="sRole"]:checked', dlg).value,
+          password: pass.value
+        };
+        const problem = !body.full_name ? "Ad soyad girin."
+          : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email) ? "Geçerli bir e-posta girin (ör. ayse@restoran.com)."
+          : body.password.length < 6 ? "Şifre en az 6 karakter olmalı." : "";
+        if (problem) { err.textContent = problem; err.hidden = false; return; }
+        const btn = e.submitter; btn.disabled = true; btn.textContent = "Oluşturuluyor…";
+        try {
+          const u = await Api.createStaff(body);
+          if (!Api.demo) {
+            const saved = localStaff().filter((s) => s.email !== body.email);
+            saved.push({ id: u.id, full_name: body.full_name, email: body.email, role: body.role });
+            localStorage.setItem(LOCAL_STAFF_KEY, JSON.stringify(saved));
+          }
+          // Şifre sadece bir kez gösterilir
+          $(".dialog", $("#modalRoot")).innerHTML = `
+            <h2>Hesap oluşturuldu</h2>
+            <p class="muted" style="margin:0">${esc(body.full_name)} artık ${esc(ROLES[body.role].label.toLocaleLowerCase("tr"))} olarak giriş yapabilir. Bu bilgileri kendisine iletin; şifre bir daha gösterilmeyecek.</p>
+            <div class="cred"><div><small>E-posta</small><b>${esc(body.email)}</b></div><div><small>Şifre</small><b class="num">${esc(body.password)}</b></div></div>
+            <div class="foot"><button class="btn" type="button" id="copyCred">Bilgileri kopyala</button><button class="btn primary" type="button" id="doneCred">Tamam</button></div>`;
+          $("#copyCred").onclick = async () => {
+            try { await navigator.clipboard.writeText(`Sofra paneli girişi\nE-posta: ${body.email}\nŞifre: ${body.password}`); toast("Giriş bilgileri kopyalandı"); }
+            catch { toast("Kopyalanamadı, bilgileri elle not edin.", "err"); }
+          };
+          $("#doneCred").onclick = () => { close(); renderStaff(); };
+          $("#doneCred").focus();
+        } catch (ex) { err.textContent = ex.message; err.hidden = false; btn.disabled = false; btn.textContent = "Hesabı oluştur"; }
+      };
+    });
   }
 
   function niceStep(max) {
