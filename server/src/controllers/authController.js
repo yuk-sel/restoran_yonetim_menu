@@ -50,7 +50,7 @@ async function login(req, res) {
 
     res.json({
       token,
-      user: { id: user.id, full_name: user.full_name, role: user.role }
+      user: { id: user.id, full_name: user.full_name, role: user.role, restaurant_id: user.restaurant_id }
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

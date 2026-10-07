@@ -7,5 +7,7 @@ router.get('/categories/:category_id/products', menuController.getProductsByCate
 router.get('/categories', menuController.getCategories);
 router.post('/categories',verifyToken, menuController.createCategory);
 router.post('/products', verifyToken, menuController.createProduct);
+router.patch('/products/:id/status', verifyToken, menuController.updateProductStatus);
+router.get('/products', menuController.getAllProducts);
 
 module.exports = router;

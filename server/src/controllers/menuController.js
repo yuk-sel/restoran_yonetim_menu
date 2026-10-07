@@ -47,4 +47,28 @@ async function createProduct(req, res) {
     }
     
 }
-module.exports= {getCategories, createCategory, getProductsByCategory, createProduct};
+
+async function updateProductStatus(req, res) {
+    try{
+        const productId = req.params.id;
+        const { status } = req.body;
+        const updatedProduct = await Product.updateStatus(productId, status);
+        if (!updatedProduct) {
+            return res.status(404).json({ error: 'Ürün bulunamadı' });
+        }
+        res.json(updatedProduct);
+    }
+    catch(err){
+        res.status(500).json({error: err.message})
+    }
+}
+async function getAllProducts(req, res) {
+    try{
+        const products = await Product.findAll();
+        res.json(products);
+    }
+    catch(err){
+        res.status(500).json({error: err.message})
+    }
+}
+module.exports= {getCategories, createCategory, getProductsByCategory, createProduct, updateProductStatus, getAllProducts};

@@ -20,4 +20,15 @@ async function findById(id) {
     return result.rows[0]
 }
 
-module.exports={findByCategory, create, findById}
+async function updateStatus(id, status) {
+    const result= await pool.query(
+        'UPDATE products SET status=$1 WHERE id=$2 RETURNING *', [status, id]);
+    return result.rows[0]
+}
+
+async function findAll() {
+    const result= await pool.query('SELECT * FROM products');
+    return result.rows
+}
+
+module.exports={findByCategory, create, findById, updateStatus, findAll}

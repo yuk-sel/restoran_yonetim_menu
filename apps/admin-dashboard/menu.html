@@ -1,334 +1,101 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Menü Yönetimi - Sofra Panel</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#F3F5F4; --surface:#FFFFFF; --surface-2:#F7F9F8; --ink:#14201E; --muted:#5F6F6B; --line:#DFE5E3;
-  --brand:#0F3D38; --brand-2:#17584F; --brand-ink:#E8F2EF; --accent:#E8A317; --accent-ink:#3A2900;
-  --s-ready:#1F8A5B; --s-ready-bg:#DDF3E8;
-  --danger:#C0392B; --danger-bg:#FBE5E2;
-  --shadow:0 1px 2px rgba(15,40,36,.06);
-  --font-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
-  --font-body:'Figtree','Segoe UI',system-ui,sans-serif;
-  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#0D1614; --surface:#152220; --surface-2:#1A2A27; --ink:#E6EFEC; --muted:#93A8A3; --line:#26383A;
-    --brand:#0A2925; --brand-2:#1B6157; --accent-ink:#2B1F00;
-    --s-ready:#5FD09B; --s-ready-bg:#12372A;
-    --danger:#F08477; --danger-bg:#41201C; --shadow:none;
-  }
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
-button,input,select,textarea{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-h1,h2,h3{font-family:var(--font-display);margin:0;letter-spacing:-.01em}
-
-.app{display:grid;grid-template-columns:240px 1fr;min-height:100%}
-
-/* Sidebar */
-.side{background:var(--brand);color:var(--brand-ink);padding:22px 14px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:100vh;height:100dvh}
-.brand{display:flex;align-items:center;gap:10px;padding:0 8px}
-.brand-mark{width:34px;height:34px;border-radius:9px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:18px}
-.brand b{font-family:var(--font-display);font-size:17px;display:block;line-height:1.1}
-.brand small{opacity:.65;font-size:12px}
-.nav{display:flex;flex-direction:column;gap:2px}
-.nav button{display:flex;align-items:center;gap:11px;background:none;border:0;padding:10px 12px;border-radius:9px;color:inherit;opacity:.78;text-align:left;font-weight:500;cursor:pointer}
-.nav button:hover{background:rgba(255,255,255,.07);opacity:1}
-.nav button[aria-current="page"]{background:rgba(255,255,255,.13);opacity:1}
-.nav svg{width:19px;height:19px;flex:none}
-.nav .badge{margin-left:auto;background:var(--accent);color:var(--accent-ink);border-radius:99px;font-size:12px;font-weight:600;padding:0 8px;min-width:22px;text-align:center}
-.side-foot{margin-top:auto;font-size:13px;display:flex;flex-direction:column;gap:10px;padding:0 8px}
-.side-foot .user{display:flex;align-items:center;gap:10px}
-.avatar{width:32px;height:32px;border-radius:50%;background:var(--brand-2);display:grid;place-items:center;font-weight:600;font-size:13px}
-
-/* Main Content */
-.main{padding:26px 32px 48px;min-width:0}
-.topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
-.topbar h1{font-size:28px;font-weight:700}
-.topbar p{margin:2px 0 0;color:var(--muted)}
-
-/* Menu Layout (Form & Grid) */
-.menu-container{display:grid;grid-template-columns:360px 1fr;gap:24px;align-items:start}
-
-/* Common Card Style */
-.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
-.card-header{margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
-.card-title{font-size:18px;font-weight:700}
-
-/* Form Elements */
-.form-group{margin-bottom:14px}
-.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--muted)}
-.form-control{width:100%;padding:10px 12px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;color:var(--ink);transition:border-color .2s}
-.form-control:focus{outline:none;border-color:var(--brand-2)}
-textarea.form-control{resize:vertical;min-height:70px}
-
-/* Buttons */
-.btn{border:1px solid var(--line);background:var(--surface);padding:8px 16px;border-radius:99px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;transition:all .2s}
-.btn:hover{background:var(--surface-2)}
-.btn-primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
-.btn-primary:hover{background:var(--brand-2)}
-.btn-sm{padding:5px 10px;font-size:12px;border-radius:6px}
-.btn-danger{background:var(--danger-bg);color:var(--danger);border-color:transparent}
-.btn-danger:hover{opacity:.8}
-
-/* Menu Control Toolbar */
-.toolbar{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap}
-.search-box{flex:1;min-width:200px}
-
-/* Menu Grid & Items */
-.menu-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));gap:16px}
-.menu-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow);transition:transform .2s}
-.menu-card:hover{transform:translateY(-2px)}
-.menu-card-img{width:100%;height:140px;object-fit:cover;background:var(--surface-2)}
-.menu-card-body{padding:14px;display:flex;flex-direction:column;flex:1}
-.menu-card-tag{align-self:flex-start;background:var(--surface-2);color:var(--muted);font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;margin-bottom:6px;text-transform:uppercase}
-.menu-card-title{font-size:16px;font-weight:700;margin-bottom:4px}
-.menu-card-desc{font-size:13px;color:var(--muted);margin-bottom:12px;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.menu-card-footer{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--line)}
-.menu-card-price{font-family:var(--font-display);font-weight:700;font-size:16px;color:var(--brand-2)}
-
-@media (max-width:1024px){
-  .menu-container{grid-template-columns:1fr}
-}
-@media (max-width:860px){
-  .app{grid-template-columns:1fr}
-  .side{position:static;height:auto;flex-direction:row;align-items:center;padding:10px 12px;gap:8px;overflow-x:auto}
-  .brand small,.side-foot,.brand b{display:none}
-  .nav{flex-direction:row}
-  .nav button{white-space:nowrap;padding:9px 12px}
-  .main{padding:20px 16px 40px}
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Restoran Yönetim Paneli - Menü Yönetimi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="app">
-  <!-- Sidebar / Nav -->
-  <aside class="side">
-    <div class="brand">
-      <div class="brand-mark">S</div>
-      <div><b>Sofra</b><small>Yönetim paneli</small></div>
-    </div>
-    
-    <nav class="nav" id="nav" aria-label="Ana menü">
-      <button type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z"/></svg>
-        <span>Genel Bakış</span>
-      </button>
-      <button type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2zM9 8h6M9 12h6"/></svg>
-        <span>Siparişler</span>
-        <span class="badge">3</span>
-      </button>
-      <button type="button" aria-current="page">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
-        <span>Menü Yönetimi</span>
-      </button>
-      <button type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3zM20 14v3M14 20h3M20 20v1"/></svg>
-        <span>Masalar & QR</span>
-      </button>
-    </nav>
-
-    <div class="side-foot">
-      <div class="user">
-        <div class="avatar">YK</div>
-        <div>
-          <div>Yüksel</div>
-          <div style="opacity:.65;font-size:12px">Yönetici</div>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Main Section -->
+  <!-- Yan Menü / Sidebar -->
+  <div id="sidebar-container"></div>
+  <!-- Ana İçerik / Main -->
   <main class="main">
     <div class="topbar">
       <div>
         <h1>Menü Yönetimi</h1>
-        <p>Restoran menünüzü güncelleyin ve yeni lezzetler ekleyin</p>
+        <p>Restoran menüsünü, kategorileri ve ürün detaylarını düzenleyin</p>
+      </div>
+      <div class="actions">
+        <a href="#kategori-ekle" class="btn">Kategori Ekle</a>
+        <a href="#urun-ekle" class="btn btn-primary">+ Yeni Ürün Ekle</a>
       </div>
     </div>
 
-    <div class="menu-container">
-      <!-- Sol Taraf: Yemek Ekleme Formu -->
-      <section class="card">
-        <div class="card-header">
-          <h2 class="card-title">Yeni Ürün Ekle</h2>
-        </div>
-        <form id="addMenuForm">
-          <div class="form-group">
-            <label for="foodName">Yemek Adı</label>
-            <input type="text" id="foodName" class="form-control" placeholder="Örn: Izgara Köfte" required>
-          </div>
+    <!-- Kategori Filtreleri -->
+    <div class="category-tabs">
+      <button type="button" class="tab-btn active" id="tum-urunler-btn">Tüm Ürünler</button>
+      <span id="kategori-tab-list"></span>
+    </div>
 
+    <!-- Menü Kartları Izgarası -->
+    <div class="menu-grid">
+    </div>
+
+    <!-- Yeni Ürün Ekleme Formu -->
+    <section id="urun-ekle" class="form-section">
+      <h2>Yeni Ürün Ekle</h2>
+      <form id="urun-form" onsubmit="return false;">
+        <div class="form-grid">
           <div class="form-group">
-            <label for="foodCategory">Kategori</label>
-            <select id="foodCategory" class="form-control" required>
+            <label for="urun-adi">Ürün Adı</label>
+            <input type="text" id="urun-adi" placeholder="Örn: Izgara Köfte">
+          </div>
+          <div class="form-group">
+            <label for="urun-kategori">Kategori</label>
+            <select id="urun-kategori">
               <option value="">Kategori Seçin</option>
-              <option value="Ana Yemek">Ana Yemek</option>
-              <option value="Çorba">Çorba</option>
-              <option value="Tatlı">Tatlı</option>
-              <option value="İçecek">İçecek</option>
-              <option value="Salata">Salata</option>
             </select>
           </div>
-
           <div class="form-group">
-            <label for="foodPrice">Fiyat (₺)</label>
-            <input type="number" id="foodPrice" class="form-control" step="0.5" placeholder="Örn: 240.00" required>
+            <label for="urun-fiyat">Fiyat (TL)</label>
+            <input type="number" id="urun-fiyat" step="0.01" placeholder="0.00">
           </div>
-
           <div class="form-group">
-            <label for="foodImage">Görsel URL</label>
-            <input type="url" id="foodImage" class="form-control" placeholder="https://..." required>
+            <label for="urun-resim">Görsel URL</label>
+            <input type="text" id="urun-resim" placeholder="https://resim-url.com">
           </div>
-
-          <div class="form-group">
-            <label for="foodDesc">Açıklama</label>
-            <textarea id="foodDesc" class="form-control" placeholder="İçerik, porsiyon bilgisi vb." required></textarea>
+          <div class="form-group full">
+            <label for="urun-aciklama">Açıklama</label>
+            <textarea id="urun-aciklama" rows="3" placeholder="Ürün malzemelerini ve detaylarını girin..."></textarea>
           </div>
-
-          <button type="submit" class="btn btn-primary" style="width: 100%;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 5v14M5 12h14"/></svg>
-            Menüye Ekle
-          </button>
-        </form>
-      </section>
-
-      <!-- Sağ Taraf: Mevcut Menü Kontrol Alanı -->
-      <section>
-        <!-- Filtreleme Araç Çubuğu -->
-        <div class="toolbar">
-          <input type="text" id="searchInput" class="form-control search-box" placeholder="Menüde ara...">
-          <select id="filterCategory" class="form-control" style="width: auto;">
-            <option value="Tümü">Tüm Kategoriler</option>
-            <option value="Ana Yemek">Ana Yemekler</option>
-            <option value="Çorba">Çorbalar</option>
-            <option value="Tatlı">Tatlılar</option>
-            <option value="İçecek">İçecekler</option>
-          </select>
         </div>
-
-        <!-- Kartların Listelendiği Grid -->
-        <div class="menu-grid" id="menuGrid">
-          <!-- Dinamik yemek kartları buraya yüklenecektir -->
+        <div class="form-actions">
+          <button id= "urunEkleButon" button type="submit" class="btn btn-primary">Kaydet</button>
         </div>
-      </section>
-    </div>
+      </form>
+    </section>
+
+    <!-- Yeni Kategori Ekleme Formu -->
+    <section id="kategori-ekle" class="form-section">
+      <h2>Yeni Kategori Ekle</h2>
+      <form id="kategori-form" onsubmit="return false;">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="kategori-adi">Kategori Adı</label>
+            <input type="text" id="kategori-adi" placeholder="Örn: Çorbalar">
+          </div>
+          <div class="form-group">
+            <label for="kategori-sira">Sıralama No</label>
+            <input type="number" id="kategori-sira" placeholder="1">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button id= "kategoriButon" button type="submit" class="btn">Kategori Oluştur</button>
+        </div>
+      </form>
+    </section>
+
   </main>
 </div>
 
-<!-- Menü Yönetimi için JavaScript Mantığı -->
-<script>
-  // Başlangıç Mock Menü Verileri
-  let menuList = [
-    {
-      id: 1,
-      name: "Mercimek Çorbası",
-      category: "Çorba",
-      price: 85.00,
-      image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=500&q=80",
-      desc: "Geleneksel süzme mercimek çorbası, taze limon ve kruton ekmek ile."
-    },
-    {
-      id: 2,
-      name: "Mantar Soslu Antrikot",
-      category: "Ana Yemek",
-      price: 420.00,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=500&q=80",
-      desc: "250gr dinlendirilmiş dana antrikot, özel kremalı mantar sos ve patates püresi eşliğinde."
-    },
-    {
-      id: 3,
-      name: "Fıstıklı Baklava",
-      category: "Tatlı",
-      price: 180.00,
-      image: "https://images.unsplash.com/photo-1519676867240-f03562e64548?auto=format&fit=crop&w=500&q=80",
-      desc: "Gaziantep fıstıklı, 4 kat el açması çıtır çıtır baklava (3 Dilim)."
-    }
-  ];
-
-  const menuGrid = document.getElementById('menuGrid');
-  const addMenuForm = document.getElementById('addMenuForm');
-  const searchInput = document.getElementById('searchInput');
-  const filterCategory = document.getElementById('filterCategory');
-
-  // Menü Kartlarını Ekrana Çizme
-  function renderMenu() {
-    const searchVal = searchInput.value.toLowerCase();
-    const categoryVal = filterCategory.value;
-
-    const filtered = menuList.filter(item => {
-      const matchesSearch = item.name.toLowerCase().includes(searchVal) || item.desc.toLowerCase().includes(searchVal);
-      const matchesCategory = categoryVal === "Tümü" || item.category === categoryVal;
-      return matchesSearch && matchesCategory;
-    });
-
-    if (filtered.length === 0) {
-      menuGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--muted); padding: 40px 0;">Eşleşen ürün bulunamadı.</div>`;
-      return;
-    }
-
-    menuGrid.innerHTML = filtered.map(item => `
-      <div class="menu-card">
-        <img src="${item.image}" alt="${item.name}" class="menu-card-img" onerror="this.src='https://via.placeholder.com/300x200?text=Gorsel+Yok'">
-        <div class="menu-card-body">
-          <span class="menu-card-tag">${item.category}</span>
-          <div class="menu-card-title">${item.name}</div>
-          <div class="menu-card-desc">${item.desc}</div>
-          <div class="menu-card-footer">
-            <span class="menu-card-price">${Number(item.price).toFixed(2)} ₺</span>
-            <button class="btn btn-sm btn-danger" onclick="deleteMenuItem(${item.id})">Sil</button>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  // Yeni Yemek Ekleme Fonksiyonu
-  addMenuForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const newItem = {
-      id: Date.now(),
-      name: document.getElementById('foodName').value,
-      category: document.getElementById('foodCategory').value,
-      price: parseFloat(document.getElementById('foodPrice').value),
-      image: document.getElementById('foodImage').value,
-      desc: document.getElementById('foodDesc').value
-    };
-
-    menuList.unshift(newItem);
-    renderMenu();
-    addMenuForm.reset();
-  });
-
-  // Yemek Silme Fonksiyonu
-  function deleteMenuItem(id) {
-    if (confirm("Bu ürünü menüden kaldırmak istediğinize emin misiniz?")) {
-      menuList = menuList.filter(item => item.id !== id);
-      renderMenu();
-    }
-  }
-
-  // Arama ve Filtre Dinleyicileri
-  searchInput.addEventListener('input', renderMenu);
-  filterCategory.addEventListener('change', renderMenu);
-
-  // Sayfa İlk Yüklendiğinde Menüyü Bas
-  renderMenu();
-</script>
+<script src="assets/js/sidebar.js"></script>
+<script src="assets/js/menu.js"></script>
 
 </body>
 </html>
