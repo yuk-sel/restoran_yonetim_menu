@@ -8,7 +8,6 @@ const menuRoutes = require('./routes/menu.routes');
 const tableRoutes = require('./routes/table.routes');
 const orderRoutes = require('./routes/order.routes');
 const waiterRoutes= require('./routes/waiter.routes');
-const { error } = require('console');
 const app = express(); 
 app.use(cors()); 
 app.use(express.json()); 
@@ -22,6 +21,13 @@ app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')))
 app.use((err,req,res,next)=>{
     res.status(400).json({error: err.message})
 })
+
+const frontendPath = path.join(__dirname, '../../apps/admin-dashboard');
+app.use('/admin-dashboard', express.static(frontendPath));
+
+app.get('/', (req, res) => {
+    res.redirect('/admin-dashboard/login.html');
+});
 
     pool.query('SELECT NOW()') 
     .then(res => console.log('Veritabanı bağlantısı başarılı:', res.rows[0])) 
