@@ -6,10 +6,10 @@ async function findByCategory(category_id) {
     
 }
 
-async function create({category_id, name, description, price}) {
+async function create({category_id, name, description, price,image_url}) {
     const result= await pool.query(
-        'INSERT INTO products (category_id, name, description, price) VALUES ($1, $2, $3, $4) RETURNING *',
-        [category_id, name, description, price]
+        'INSERT INTO products (category_id, name, description, price, image_url) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [category_id, name, description, price, image_url]
     )
     return result.rows[0]
     

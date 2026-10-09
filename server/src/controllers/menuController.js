@@ -37,9 +37,21 @@ async function getProductsByCategory(req, res) {
 }
 
 async function createProduct(req, res) {
+
+    console.log("FILE:", req.file)
+    console.log("body:", req.body)
     try{
+        console.log("FILE1:", req.file)
+        console.log("body1:", req.body)
         const{category_id, name, description, price}= req.body;
-        const products =await Product.create({category_id, name, description, price});
+        let image_url
+        if(req .file){
+            image_url= `/uploads${req.file.filename}`
+        }
+        else{
+            image_url=null
+        }
+        const products =await Product.create({category_id, name, description, price, image_url});
         res.status(201).json(products)
     }
     catch(err){
