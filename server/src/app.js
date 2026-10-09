@@ -15,10 +15,14 @@ app.use('/api/menu', menuRoutes);
 app.use('/api/table', tableRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/waiter', waiterRoutes);
-app.get('/', (req, res) => 
-    { 
-        res.send('Restoran API çalışıyor'); 
-    }); 
+
+const frontendPath = path.join(__dirname, '../../apps/admin-dashboard');
+app.use('/frontend', express.static(frontendPath));
+
+app.get('/', (req, res) => {
+    res.redirect('/admin-dashboard/login.html');
+});
+
     pool.query('SELECT NOW()') 
     .then(res => console.log('Veritabanı bağlantısı başarılı:', res.rows[0])) 
     .catch(err => console.error('Veritabanı bağlantı hatası:', err)); 
