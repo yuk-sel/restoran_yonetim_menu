@@ -46,7 +46,7 @@ async function createProduct(req, res) {
         const{category_id, name, description, price}= req.body;
         let image_url
         if(req .file){
-            image_url= `/uploads${req.file.filename}`
+            image_url= `/uploads/${req.file.filename}`
         }
         else{
             image_url=null
