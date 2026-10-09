@@ -1,6 +1,6 @@
 const urunForm= document.getElementById("urun-form")
 const kategoriForm= document.getElementById("kategori-form")
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = window.location.origin + '/api';
 
 const urunEklemeButonu= document.getElementById("urunEkleButon")
 const kategoriEklemeButonu= document.getElementById('kategoriButon')

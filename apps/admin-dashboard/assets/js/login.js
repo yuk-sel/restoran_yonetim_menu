@@ -1,5 +1,5 @@
 const loginForm= document.getElementById('login-form')
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = window.location.origin + '/api';
 loginForm.addEventListener("submit", async function(event){
   event.preventDefault();
   const email= document.getElementById('email').value
