@@ -23,11 +23,17 @@ urunForm.addEventListener("submit", async function(event) {
     const urunResmi= document.getElementById('urun-resim').value
     const urunAciklama= document.getElementById('urun-aciklama').value
 
+    const formData= new FormData()
+    formData.append('name', urunAdi)
+    formData.append('category_id', urunKategori)
+    formData.append('description', urunAciklama)
+    formData.append('price', urunFiyat)
+    formData.append('image_url', urunResmi)
 
     const res= await fetch(`${API_BASE}/menu/products`, {
         method: "POST",
-        headers: {'Content-Type': "application/json", 'Authorization': `Bearer ${token}`},
-        body: JSON.stringify({category_id: urunKategori, name: urunAdi, description: urunAciklama, price: urunFiyat})
+        headers: {'Authorization': `Bearer ${token}`},
+        body: formData
     })
     const data= await res.json()
     loadAllProducts()
@@ -68,12 +74,12 @@ async function loadProducts(categoryId) {
         const card= document.createElement("div")
         card.className= "menu-card"
         card.innerHTML= `
-        <img src="${product.image_url}" alt="${product.name}">
+        <img src="${product.image_url}" alt="${product.name}" class="card-img">
         <h3 class="card-title">${product.name}</h3>
         <p class="card-desc">${product.description}</p>
         <span class="card-price">${product.price} TL</span>
-        <button class="duzenle-btn icon-btn" type="button" title="Düzenle">✎</button>
-        <button class="sil-btn icon-btn" type="button" title="Sil">✕</button>
+        <button class="duzenle-btn icon-btn" type="button" title="Düzenle">✎ <button class="sil-btn icon-btn" type="button" title="Sil">✕</button>
+        
     `
     card.querySelector(".sil-btn").addEventListener("click", async function(event) {
         event.preventDefault();
