@@ -17,7 +17,7 @@ app.use('/api/order', orderRoutes);
 app.use('/api/waiter', waiterRoutes);
 
 const frontendPath = path.join(__dirname, '../../apps/admin-dashboard');
-app.use('/frontend', express.static(frontendPath));
+app.use('/admin-dashboard', express.static(frontendPath));
 
 app.get('/', (req, res) => {
     res.redirect('/admin-dashboard/login.html');
