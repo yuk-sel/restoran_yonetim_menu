@@ -20,7 +20,7 @@ urunForm.addEventListener("submit", async function(event) {
     const urunAdi= document.getElementById('urun-adi').value
     const urunKategori= document.getElementById('urun-kategori').value
     const urunFiyat= document.getElementById('urun-fiyat').value
-    const urunResmi= document.getElementById('urun-resim').value
+    const urunResmi= document.getElementById('urun-resim').files[0]
     const urunAciklama= document.getElementById('urun-aciklama').value
 
     const formData= new FormData()
