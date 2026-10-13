@@ -71,6 +71,37 @@
       </form>
     </section>
 
+
+    <!-- Ürün Güncelleme Formu -->
+    <section id="urun-duzenle" class="form-section" style="display:none;">
+      <h2>Ürünü Düzenle</h2>
+      <form id="urun-guncelle-form" onsubmit="return false;">
+        <input type="hidden" id="guncel-urun-id">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="guncel-urun-ad">Ürün Adı</label>
+            <input type="text" id="guncel-urun-ad">
+          </div>
+          <div class="form-group">
+            <label for="guncel-urun-fiyat">Fiyat (TL)</label>
+            <input type="number" id="guncel-urun-fiyat" step="0.01">
+          </div>
+          <div class="form-group">
+            <label for="guncel-urun-resim">Görsel URL</label>
+            <input type="file" id="guncel-urun-resim" accept="image/*" placeholder="https://resim-url.com">
+          </div>
+          <div class="form-group full">
+            <label for="guncel-urun-aciklama">Açıklama</label>
+            <textarea id="guncel-urun-aciklama" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button id="urunGuncelleButon" type="submit" class="btn btn-primary">Güncelle</button>
+          <button id="urunGuncelleIptal" type="button" class="btn">İptal</button>
+        </div>
+      </form>
+    </section>
+
     <!-- Yeni Kategori Ekleme Formu -->
     <section id="kategori-ekle" class="form-section">
       <h2>Yeni Kategori Ekle</h2>
