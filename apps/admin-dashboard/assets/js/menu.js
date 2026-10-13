@@ -166,6 +166,13 @@ async function loadProducts(categoryId) {
     return products
 }
 
+function seciliButon(buton){
+    document.querySelectorAll(".tab-btn").forEach(btn=>{
+        btn.classList.remove("active")
+    })
+    buton.classList.add("active")
+}
+
 async function loadCategories() {
     const res= await fetch(`${API_BASE}/menu/categories`,
         {method: "GET"}
@@ -178,6 +185,7 @@ async function loadCategories() {
         newTab.className = "tab-btn";
         newTab.textContent = category.name;
         newTab.addEventListener("click", () => {
+            seciliButon(newTab)
             loadProducts(category.id);
         });
         kategoriTabList.appendChild(newTab)
@@ -260,6 +268,7 @@ async function loadAllProducts(){
 } 
 
 tumUrunlerButon.addEventListener("click", function() {
+    seciliButon(tumUrunlerButon)
     loadAllProducts();
 });
 
