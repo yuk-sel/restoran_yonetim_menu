@@ -33,5 +33,7 @@ router.post('/categories',verifyToken, menuController.createCategory);
 router.post('/products', verifyToken, upload.single("image_url"), menuController.createProduct);
 router.patch('/products/:id/status', verifyToken, menuController.updateProductStatus);
 router.get('/products', menuController.getAllProducts);
+router.delete('/products/:id', verifyToken, menuController.deleteProduct);
+router.patch('/products/:id', verifyToken, upload.single("image_url"), menuController.updateProduct)
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const urunForm= document.getElementById("urun-form")
 const kategoriForm= document.getElementById("kategori-form")
+const urunGuncellemeForm= document.getElementById("urun-guncelle-form")
 const API_BASE = window.location.origin + '/api';
 
 const urunEklemeButonu= document.getElementById("urunEkleButon")
@@ -43,6 +44,45 @@ urunForm.addEventListener("submit", async function(event) {
 
 
 })
+
+/*Ürün güncelleme*/
+urunGuncellemeForm.addEventListener("submit", async function(event) {
+    event.preventDefault()
+
+    const productID= document.getElementById('guncel-urun-id').value  
+    const guncelUrunAdi= document.getElementById('guncel-urun-ad').value
+    const guncelUrunFiyati= document.getElementById('guncel-urun-fiyat').value
+    const guncelUrunAciklamasi= document.getElementById('guncel-urun-aciklama').value
+    const guncelUrunResmi= document.getElementById('guncel-urun-resim').files[0]
+
+    const formData= new FormData()
+    formData.append("name", guncelUrunAdi)
+    formData.append('price', guncelUrunFiyati)
+    formData.append('description', guncelUrunAciklamasi)
+
+    if(guncelUrunResmi){
+        formData.append('image_url', guncelUrunResmi)
+    }
+    formData.append('id', productID)
+    
+    try{
+        const res= await fetch(`${API_BASE}/menu/products/${productID}`,{
+            method: "PATCH",
+            headers: {'Authorization': `Bearer ${token}`},
+            body: formData
+        })
+        const data= await res.json()
+        loadAllProducts()
+        urunGuncellemeForm.reset()
+        document.getElementById("urun-duzenle").style.display = "none";
+    }
+
+    catch(error){
+        console.error("Güncellenirken bir hata oluştu.", error)
+    }
+})
+
+
     /*Kategori ekleme*/
 kategoriForm.addEventListener("submit", async function(event) {
     event.preventDefault()
@@ -78,9 +118,12 @@ async function loadProducts(categoryId) {
         <h3 class="card-title">${product.name}</h3>
         <p class="card-desc">${product.description}</p>
         <span class="card-price">${product.price} TL</span>
-        <button class="duzenle-btn icon-btn" type="button" title="Düzenle">✎ <button class="sil-btn icon-btn" type="button" title="Sil">✕</button>
+        <button class="duzenle-btn icon-btn" type="button" title="Düzenle">✎</button> 
+        <button class="sil-btn icon-btn" type="button" title="Sil">✕</button>
         
     `
+
+    /* STOK DIŞI BIRAKMA
     card.querySelector(".sil-btn").addEventListener("click", async function(event) {
         event.preventDefault();
         const productId = product.id;
@@ -90,7 +133,34 @@ async function loadProducts(categoryId) {
             body: JSON.stringify({status: "OUT_OF_STOCK"})
         })
         loadProducts(categoryId);
+    });*/
+
+    card.querySelector(".sil-btn").addEventListener("click", async function(event) {
+        event.preventDefault();
+        const productId = product.id;
+        const res = await fetch(`${API_BASE}/menu/products/${productId}`,{
+            method: "DELETE",
+            headers: {'Content-Type': "application/json", 'Authorization': `Bearer ${token}`}
+        })
+        loadProducts(categoryId);
     });
+
+    card.querySelector(".duzenle-btn").addEventListener("click", async function (event){
+
+        document.getElementById('guncel-urun-id').value= product.id;
+        document.getElementById('guncel-urun-ad').value = product.name ?? ""
+        document.getElementById('guncel-urun-fiyat').value= product.price ?? ""
+        document.getElementById('guncel-urun-aciklama').value= product.description ?? ""
+
+        // Güncelleme bölümünü görünür yap
+        document.getElementById("urun-duzenle").style.display = "block";
+
+        // Formu ekranda görünür alana kaydır
+        document.getElementById("urun-duzenle").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    })
     menuGrid.appendChild(card)
     })
     return products
@@ -143,6 +213,8 @@ async function loadAllProducts(){
         <button class="duzenle-btn icon-btn" type="button" title="Düzenle">✎</button>
         <button class="sil-btn icon-btn" type="button" title="Sil">✕</button>
     `
+
+    /* STOK DIŞI BIRAKMA
     card.querySelector(".sil-btn").addEventListener("click", async function(event) {
         event.preventDefault();
         const productId = product.id;
@@ -152,7 +224,36 @@ async function loadAllProducts(){
             body: JSON.stringify({status: "OUT_OF_STOCK"})
         })
         loadAllProducts();
+    });*/
+
+    card.querySelector(".sil-btn").addEventListener("click", async function(event) {
+        event.preventDefault();
+        const productId = product.id;
+        const res = await fetch(`${API_BASE}/menu/products/${productId}`,{
+            method: "DELETE",
+            headers: {'Content-Type': "application/json", 'Authorization': `Bearer ${token}`}
+        })
+
+        loadAllProducts();
     });
+
+        card.querySelector(".duzenle-btn").addEventListener("click", async function (event){
+        event.preventDefault();
+        document.getElementById('guncel-urun-id').value= product.id;
+        document.getElementById('guncel-urun-ad').value = product.name ?? ""
+        document.getElementById('guncel-urun-fiyat').value= product.price ?? ""
+        document.getElementById('guncel-urun-aciklama').value= product.description ?? ""
+
+        // Güncelleme bölümünü görünür yap
+        document.getElementById("urun-duzenle").style.display = "block";
+
+        // Formu ekranda görünür alana kaydır
+        document.getElementById("urun-duzenle").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    })
+
     menuGrid.appendChild(card)
     })
     return products

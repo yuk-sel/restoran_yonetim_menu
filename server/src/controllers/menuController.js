@@ -83,4 +83,36 @@ async function getAllProducts(req, res) {
         res.status(500).json({error: err.message})
     }
 }
-module.exports= {getCategories, createCategory, getProductsByCategory, createProduct, updateProductStatus, getAllProducts};
+
+async function deleteProduct(req, res) {
+
+    try{
+        const productID= req.params.id
+        const products= await Product.deleteProduct(productID)
+        res.json(products)
+    }
+    catch(err){
+        res.status(404).json({error: err.message})
+    }
+    
+}
+
+async function updateProduct(req, res) {
+
+    try{
+        const productID= req.params.id
+        const{name, description, price}= req.body
+        let image_url=null
+        if(req.file){
+            image_url= `/uploads/${req.file.filename}`
+        }
+        const product= await Product.updateProduct({productID, name,description, price, image_url})
+        res.json(product)
+    }
+    catch(err){
+        res.status(404).json({error: err.message})
+    }
+    
+}
+
+module.exports= {getCategories, createCategory, getProductsByCategory, createProduct, updateProductStatus, getAllProducts, deleteProduct, updateProduct};
