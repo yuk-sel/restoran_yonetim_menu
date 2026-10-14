@@ -59,7 +59,10 @@ function urunEkranaBas(products){
             method: "DELETE",
             headers: {'Content-Type': "application/json", 'Authorization': `Bearer ${token}`}
         })
-        ekranYenile()
+        if(res.ok){
+            ekranYenile()
+        }
+        
     });
 
     card.querySelector(".duzenle-btn").addEventListener("click", async function (event){
@@ -83,6 +86,7 @@ function urunEkranaBas(products){
 }
 
 
+
 /* Yeni ürün ekleme */
 urunForm.addEventListener("submit", async function(event) {
     event.preventDefault()
@@ -93,6 +97,7 @@ urunForm.addEventListener("submit", async function(event) {
     const urunResmi= document.getElementById('urun-resim').files[0]
     const urunAciklama= document.getElementById('urun-aciklama').value
 
+    
     const formData= new FormData()
     formData.append('name', urunAdi)
     formData.append('category_id', urunKategori)
@@ -109,8 +114,6 @@ urunForm.addEventListener("submit", async function(event) {
     ekranYenile()
     localStorage.setItem("products", JSON.stringify(data))
     urunForm.reset();
-
-
 
 })
 
@@ -141,9 +144,9 @@ urunGuncellemeForm.addEventListener("submit", async function(event) {
             body: formData
         })
         const data= await res.json()
-        ekranYenile()
         urunGuncellemeForm.reset()
         document.getElementById("urun-duzenle").style.display = "none";
+        ekranYenile()
     }
 
     catch(error){
