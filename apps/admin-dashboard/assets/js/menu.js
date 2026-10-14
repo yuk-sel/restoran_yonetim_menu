@@ -214,12 +214,8 @@ async function loadCategories() {
         option.value= category.id
         option.textContent= category.name
         kategoriSelect.appendChild(option)
-    }
-
-)
-    if (categories.length > 0) {
-    loadProducts(categories[0].id);
-  }
+    })
+    loadAllProducts()
 }
 
 loadCategories()
