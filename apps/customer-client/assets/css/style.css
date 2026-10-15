@@ -186,8 +186,8 @@ img, svg { display: block; }
 .card.is-soldout { cursor: default; opacity: .6; }
 .card.is-soldout:hover { transform: none; box-shadow: none; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } }
-.card__art, .urun-img-kismi { position: relative; background: #edeee6; aspect-ratio: 1.86; display: grid; place-items: center; }
-.card__art svg, .urun-img-kismi svg, .urun-img-kismi img{ width: 54%; height: auto; transition: transform .4s; }
+.card__art, .urun-img { position: relative; background: #edeee6; aspect-ratio: 1.86; display: grid; place-items: center; }
+.card__art svg, .urun-img-kismi svg, .urun-img img{ width: 54%; height: auto; transition: transform .4s; }
 .card:hover .card__art svg { transform: rotate(-3deg) scale(1.03); }
 .badge {
   position: absolute; top: 22px; left: 22px; background: var(--paper);
