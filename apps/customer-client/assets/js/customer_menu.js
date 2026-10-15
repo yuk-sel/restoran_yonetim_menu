@@ -11,9 +11,12 @@ function urunleriEkranaBas(urunler){
     urunler.forEach(urun=>{
         const card= document.createElement("div")
         card.className="urun-card"
+        const imageHTML = (urun.image_url && urun.image_url !== "null" && urun.image_url !== "") 
+            ? `<img src="${urun.image_url}" alt="${urun.name}">` 
+            : '';
         card.innerHTML=`
         <div class="urun-img-kismi">
-            <img src="${urun.image_url ? urun.image_url : 'https://via.placeholder.com/150'}" alt="${urun.name}"> 
+            ${imageHTML}    
         </div>
         <div class="urun-icerik-kismi">
             <h3 class="urun-ismi">${urun.name}</h3>
