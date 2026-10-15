@@ -13,7 +13,7 @@ function urunleriEkranaBas(urunler){
         card.className="urun-card"
         card.innerHTML=`
         <div class="urun-img-kismi">
-            <img src="${urun.image_url}" alt="${urun.name}"> 
+            <img src="${urun.image_url ? urun.image_url : 'https://via.placeholder.com/150'}" alt="${urun.name}"> 
         </div>
         <div class="urun-icerik-kismi">
             <h3 class="urun-ismi">${urun.name}</h3>
