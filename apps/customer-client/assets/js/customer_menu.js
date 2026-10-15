@@ -2,7 +2,7 @@ const API_BASE = "https://restoran-muio.onrender.com/api";
 
 const kategoriler= document.getElementById("kategori-tab-list")
 const tumUrunlerButonu= document.getElementById("tum-urunler-btn")
-const urunCard= document.getElementById("menu")
+const urunCard= document.getElementById("menu-grid")
 const app = document.getElementById("app");
 app.hidden = false;
 
