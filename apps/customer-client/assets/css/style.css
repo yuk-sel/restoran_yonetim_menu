@@ -187,7 +187,7 @@ img, svg { display: block; }
 .card.is-soldout:hover { transform: none; box-shadow: none; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } }
 .card__art, .urun-resim-kismi {background: #edeee6; aspect-ratio: 1.86; display: grid; place-items: center; overflow: hidden; width: 100%;}
-.urun-img {width: 54%; height: 80%; object-fit: contain;
+.urun-img {width: 54%; height: 100%; object-fit: contain;
   display: block;}
 .card__art svg {display: block; max-height: 100%; object-fit: contain; width: 54%; height: 80%; transition: transform .4s; }
 .card:hover .card__art svg, .urun-resim-kismi:hover .urun-img { transform: rotate(-3deg) scale(1.03); }
