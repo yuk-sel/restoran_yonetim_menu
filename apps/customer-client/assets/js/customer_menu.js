@@ -17,16 +17,11 @@ function urunleriEkranaBas(urunler){
             ? `<img src="${urun.image_url}" alt="${urun.name}">` 
             : '';
         card.innerHTML=`
-        <div class="urun-img-kismi">
-            ${imageHTML}    
-        </div>
-        <div class="urun-icerik-kismi">
-            <h3 class="urun-ismi">${urun.name}</h3>
-            <p class="urun-aciklamasi">${urun.description}</p>
-            <div class="urun-fiyat-kismi">
-                <span class="urun-fiyat">${urun.price}</span>
-            </div>
-
+        <img src=${imageHTML} class="urun-resmi>
+        <h3 class="urun-ismi">${urun.name}</h3>
+        <p class="urun-aciklamasi">${urun.description}</p>
+        <span class="urun-fiyat">${urun.price}</span>
+        
         `
         urunCard.appendChild(card)
     })
