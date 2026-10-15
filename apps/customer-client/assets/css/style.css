@@ -155,7 +155,7 @@ img, svg { display: block; }
   display: flex; justify-content: space-between; align-items: center; gap: 20px;
   margin-top: 54px; padding-bottom: 34px; border-bottom: 1px solid var(--line);
 }
-.chips { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; padding: 2px; scroll-snap-type: x proximity; }
+.chips, #chips { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; padding: 2px; scroll-snap-type: x proximity; }
 .chips::-webkit-scrollbar { display: none; }
 .chip {
   flex: none; padding: 16px 30px; border-radius: 99px;
