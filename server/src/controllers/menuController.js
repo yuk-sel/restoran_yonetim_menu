@@ -46,7 +46,9 @@ async function createProduct(req, res) {
         const{category_id, name, description, price}= req.body;
         let image_url
         if(req .file){
-            image_url= `/uploads/${req.file.filename}`
+            const host = req.get('host'); // veya doğrudan "https://restoran-muio.onrender.com"
+            const protocol = req.protocol; // https
+            image_url = `${protocol}://${req.get('host')}/uploads/${req.file.filename}`;
         }
         else{
             image_url=null
@@ -104,7 +106,9 @@ async function updateProduct(req, res) {
         const{name, description, price}= req.body
         let image_url=null
         if(req.file){
-            image_url= `/uploads/${req.file.filename}`
+            const host = req.get('host'); // veya doğrudan "https://restoran-muio.onrender.com"
+            const protocol = req.protocol; // https
+            image_url = `${protocol}://${req.get('host')}/uploads/${req.file.filename}`;
         }
         const product= await Product.updateProduct({productID, name,description, price, image_url})
         res.json(product)
