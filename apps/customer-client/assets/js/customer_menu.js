@@ -1,4 +1,4 @@
-const API_BASE = window.location.origin + '/api';
+const API_BASE = "https://restoran-muio.onrender.com/api";
 
 const kategoriler= document.getElementById("cats")
 const tumUrunlerButonu= document.getElementById("tum-urunler-btn")
