@@ -89,7 +89,7 @@ async function kategorileriGoster() {
         })
         kategoriler.appendChild(butonolustur)
     });
-    loadAllProducts()  
+    tumUrunler()  
 }
 kategorileriGoster()
 /*Kategorilerin butonları bitti*/
