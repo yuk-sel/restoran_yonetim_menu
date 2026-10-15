@@ -1,6 +1,6 @@
 const API_BASE = "https://restoran-muio.onrender.com/api";
 
-const kategoriler= document.getElementById("kategori-tab-list")
+const kategoriler= document.getElementById("chips")
 const tumUrunlerButonu= document.getElementById("tum-urunler-btn")
 const urunCard= document.getElementById("grid")
 const app = document.getElementById("app");
