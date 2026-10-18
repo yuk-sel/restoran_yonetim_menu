@@ -1,2 +1,4 @@
 .env
 .github/workflows/
+node_modules/
+server/node-modules/

@@ -5,12 +5,24 @@ const verifyToken = require('../middlewares/auth.middleware');
 
 const multer= require('multer')
 const path= require('path')
+const {CloudinaryStorage } =require('multer-storage-cloudinary')
+const cloudinary= require('../../config/cloudinary')
+/*
 
 const storage= multer.diskStorage({
     destination: path.join(__dirname, '..', '..', 'uploads'),
     filename: (req, file, cb)=>{
         const uzanti= path.extname(file.originalname)
         cb(null, Date.now()+ uzanti)
+    }
+})
+    */
+
+const storage= new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params:{
+        folder: 'restoran-urunler',
+        allowed_formats: ['jpg', 'png', 'jpeg', 'webp']
     }
 })
 
